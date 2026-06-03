@@ -1,1 +1,115 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EZmob Video Ad Test</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    background: #f5f5f5;
+}
+.box{
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+</style>
+
+<script src="https://docdn.ezmob.com/prebid.js" async></script>
+
+<script>
+var pbjs = pbjs || {};
+pbjs.que = pbjs.que || [];
+
+pbjs.que.push(function() {
+
+    var adUnits = [{
+        code: 'container-1',
+        mediaTypes: {
+            video: {
+                context: 'outstream',
+                playerSize: [300,250],
+                renderer: {
+                    url: 'https://docdn.ezmob.com/outstream_pb.js',
+                    render: renderOutstream
+                }
+            }
+        },
+        bids: [{
+            bidder: 'adkernel',
+            params: {
+                zoneId: 370891,
+                host: 'cpm.ezmob.com'
+            }
+        }]
+    }];
+
+    pbjs.addAdUnits(adUnits);
+
+    pbjs.requestBids({
+        bidsBackHandler: function() {
+            process('container-1');
+        }
+    });
+});
+
+function process(adUnit) {
+    var bidResponses = pbjs.getHighestCpmBids(adUnit);
+
+    if (bidResponses.length === 0) {
+        console.log("No Bid Received");
+        return;
+    }
+
+    console.log("Bid Received");
+
+    var bid = bidResponses[0];
+    pbjs.renderAd(document, bid.adId);
+}
+
+function renderOutstream(bid) {
+    OutstreamPlayerPB(bid,{
+        displayMode:'floating',
+        transitions:true,
+        vpaidMode:2
+    });
+}
+</script>
+
+</head>
+<body>
+
+<div class="box">
+    <h1>EZmob Video Ad Test</h1>
+
+    <p>
+        This page is used to test EZmob Outstream Video Ads.
+    </p>
+
+    <div id="container-1"></div>
+
+    <h2>Sample Content</h2>
+
+    <p>
+        Scroll around this page and wait a few seconds.
+        If the ad is working, a floating video ad should appear.
+    </p>
+
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </p>
+
+    <p>
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+    </p>
+</div>
+
+</body>
+</html>
